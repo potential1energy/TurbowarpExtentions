@@ -17,6 +17,7 @@
     deltatime = 0
     ScratchTimer = 0
     AdDelay = 0
+    adBlock = false
     // AD Calback
     adStarted = () => {
       this.adplaying = true
@@ -27,9 +28,13 @@
     adError = () => {
       this.aderror = true
     }
+    adblockDetection = event => {
+      this.adBlock = event.hasAdblock
+    }
     // Crazy SDK
     installListeners() {
       if (packager == true) {
+        crazysdk.addEventListener("adblockDetectionExecuted", this.adblockDetection);
         crazysdk.addEventListener("adStarted", this.adStarted)
         crazysdk.addEventListener("adError", this.adError)
         crazysdk.addEventListener("adFinished", this.adFinished)
@@ -37,6 +42,7 @@
     }
     removeListeners() {
       if (packager == true) {
+        crazysdk.removeEventListener("adblockDetectionExecuted", this.adblockDetection);
         crazysdk.removeEventListener("adStarted", this.adStarted)
         crazysdk.removeEventListener("adError", this.adError)
         crazysdk.removeEventListener("adFinished", this.adFinished)
@@ -58,6 +64,9 @@
     }
     aderrorf() {
       return this.aderror;
+    }
+    adblockf() {
+      return this.adBlock
     }
     resetadstat(a) {
       if (a.MENU == 'playing') {
@@ -137,6 +146,11 @@
             opcode: 'aderrorf',
             blockType: Scratch.BlockType.BOOLEAN,
             text: 'Is AD Error'
+          },
+          {
+            opcode: 'adblockf',
+            blockType: Scratch.BlockType.BOOLEAN,
+            text: 'Adblock Detected?'
           }
         ],
 
