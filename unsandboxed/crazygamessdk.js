@@ -1,12 +1,12 @@
 (function(Scratch) {
-  'use strict';
+  'use strict'
   // Initalize the SDK
   var crazysdk = false
-  var packager = false;
+  var packager = false
   if (typeof scaffolding !== 'undefined') {
-    crazysdk = window.CrazyGames.CrazySDK.getInstance();
-    crazysdk.init();
-    packager = true;
+    crazysdk = window.CrazyGames.CrazySDK.getInstance()
+    crazysdk.init()
+    packager = true
   }
   // Define the Extention Class
   class CrazyGamesTools {
@@ -18,6 +18,8 @@
     ScratchTimer = 0
     AdDelay = 0
     adBlock = false
+    gameplay = false
+    loading = false
     // AD Calback
     adStarted = () => {
       this.adplaying = true
@@ -34,7 +36,7 @@
     // Crazy SDK
     installListeners() {
       if (packager == true) {
-        crazysdk.addEventListener("adblockDetectionExecuted", this.adblockDetection);
+        crazysdk.addEventListener("adblockDetectionExecuted", this.adblockDetection)
         crazysdk.addEventListener("adStarted", this.adStarted)
         crazysdk.addEventListener("adError", this.adError)
         crazysdk.addEventListener("adFinished", this.adFinished)
@@ -42,7 +44,7 @@
     }
     removeListeners() {
       if (packager == true) {
-        crazysdk.removeEventListener("adblockDetectionExecuted", this.adblockDetection);
+        crazysdk.removeEventListener("adblockDetectionExecuted", this.adblockDetection)
         crazysdk.removeEventListener("adStarted", this.adStarted)
         crazysdk.removeEventListener("adError", this.adError)
         crazysdk.removeEventListener("adFinished", this.adFinished)
@@ -52,7 +54,7 @@
     reqad(a) {
       if (packager == true) {
         if (a.TYPE == 'midgame' || a.TYPE == 'rewarded') {
-          crazysdk.requestAd(a.TYPE);
+          crazysdk.requestAd(a.TYPE)
         }
       } else {
         this.AdDelay = 0
@@ -60,13 +62,19 @@
       }
     }
     adplayingf() {
-      return this.adplaying;
+      return this.adplaying
     }
     aderrorf() {
-      return this.aderror;
+      return this.aderror
     }
     adblockf() {
       return this.adBlock
+    }
+    gameplayf() {
+      return this.gameplay
+    }
+    loadingf() {
+      return this.loading
     }
     resetadstat(a) {
       if (a.MENU == 'playing') {
@@ -75,6 +83,43 @@
         this.aderror = false
       }
     }
+    stateSet({toggle, state}) {
+			switch (toggle) {
+				case "Start":
+					switch (state) {
+						case "gameplay":
+              if (packager == true) {
+                crazysdk.gameplayStart()
+              }
+              this.gameplay = true
+              break
+						case "loading":
+              if (packager == true) {
+                crazysdk.sdkGameLoadingStart()
+              }
+              this.loading = true
+					} break
+				case "Stop":
+					switch (state) {
+						case "gameplay":
+              if (packager == true) {
+							  crazysdk.gameplayStop()
+              }
+              this.gameplay = false
+              break
+						case "loading":
+              if (packager == true) {
+							  crazysdk.sdkGameLoadingStop()
+              }
+              this.loading = false
+					}
+			}
+		}
+		happyTime() {
+      if (packager == true) {
+        crazysdk.happytime()
+      }
+		}
     initalize(a) {
       this.adplaying = false
       this.aderror = false
@@ -138,6 +183,28 @@
             }
           },
           {
+						opcode: "stateSet",
+						blockType: Scratch.BlockType.COMMAND,
+						text: "[toggle] [state]",
+						arguments: {
+							toggle: {
+								type: Scratch.ArgumentType.STRING,
+								menu: "toggleMenu",
+								defaultValue: "Start"
+							},
+							state: {
+								type: Scratch.ArgumentType.STRING,
+								menu: "stateMenu",
+								defaultValue: "gameplay"
+							}
+						}
+					},
+          {
+						opcode: "happyTime",
+						blockType: Scratch.BlockType.COMMAND,
+						text: "Celebrate"
+					},
+          {
             opcode: 'adplayingf',
             blockType: Scratch.BlockType.BOOLEAN,
             text: 'Is AD playing'
@@ -151,6 +218,16 @@
             opcode: 'adblockf',
             blockType: Scratch.BlockType.BOOLEAN,
             text: 'Adblock Detected?'
+          },
+          {
+            opcode: 'gameplayf',
+            blockType: Scratch.BlockType.BOOLEAN,
+            text: 'Gameplay Active?'
+          },
+          {
+            opcode: 'loadingf',
+            blockType: Scratch.BlockType.BOOLEAN,
+            text: 'Loading Active?'
           }
         ],
 
@@ -161,10 +238,16 @@
           },
           resetmenu: {
             items: ['playing','error']
-          }
+          },
+          toggleMenu: {
+						items: ["Start", "Stop"]
+					},
+					stateMenu: {
+						items: ["gameplay", "loading"]
+					}
         }
       }
     }
   }
-  Scratch.extensions.register(new CrazyGamesTools());
-})(Scratch);
+  Scratch.extensions.register(new CrazyGamesTools())
+})(Scratch)
