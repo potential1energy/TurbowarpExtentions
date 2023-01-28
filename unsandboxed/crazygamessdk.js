@@ -84,36 +84,31 @@
       }
     }
     stateSet({toggle, state}) {
-			switch (toggle) {
-				case "Start":
-					switch (state) {
-						case "gameplay":
-              if (packager == true) {
-                crazysdk.gameplayStart()
-              }
-              this.gameplay = true
-              break
-						case "loading":
-              if (packager == true) {
-                crazysdk.sdkGameLoadingStart()
-              }
-              this.loading = true
-					} break
-				case "Stop":
-					switch (state) {
-						case "gameplay":
-              if (packager == true) {
-							  crazysdk.gameplayStop()
-              }
-              this.gameplay = false
-              break
-						case "loading":
-              if (packager == true) {
-							  crazysdk.sdkGameLoadingStop()
-              }
-              this.loading = false
-					}
-			}
+      if (toggle == 'Start') {
+        if (state == 'gameplay') {
+          if (packager == true) {
+            crazysdk.gameplayStart()
+          }
+          this.gameplay = true
+        } else if (state == 'loading') {
+          if (packager == true) {
+            crazysdk.sdkGameLoadingStart()
+          }
+          this.loading = true
+        }
+      } else if (toggle == 'Stop') {
+        if (state == 'gameplay') {
+          if (packager == true) {
+            crazysdk.gameplayStop()
+          }
+          this.gameplay = false
+        } else if (state == 'loading') {
+          if (packager == true) {
+            crazysdk.sdkGameLoadingStop()
+          }
+          this.loading = false
+        }
+      }
 		}
 		happyTime() {
       if (packager == true) {
