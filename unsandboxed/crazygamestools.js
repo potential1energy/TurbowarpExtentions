@@ -59,9 +59,12 @@
     aderrorf() {
       return this.aderror;
     }
-    resetadstat() {
-      this.adplaying = false
-      this.aderror = false
+    resetadstat(a) {
+      if (a.MENU == 'playing') {
+        this.adplaying = false
+      } else if (a.MENU == 'error') {
+        this.aderror = false
+      }
     }
     initalize(a) {
       this.adplaying = false
